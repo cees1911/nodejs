@@ -23,9 +23,7 @@ mongoose
 
 //read json file
 
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, 'utf-8')
-);
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, 'utf-8'));
 
 //import data into database
 
@@ -58,3 +56,5 @@ if (process.argv[2] === '--import') {
 
 //console.log(process.argv) geeft een array met daarin onder andere
 // de --import of -- delete parameter
+//comando = dus ---- node ./dev-data/data/import-dev-data.js --delete ----
+// en dan ---- node ./dev-data/data/import-dev-data.js --import ----
