@@ -37,6 +37,7 @@ const tourSchema = new mongoose.Schema(
       default: 4.5,
       min: [1, 'Rating must be above 1.0'],
       max: [5, 'Rating must be under 5.1'],
+      set: (val) => Math.round(val * 10) / 10, // Math.round geeft alleen intgers zo krijg je 1 decimaal
     },
     ratingsQuantity: {
       type: Number,
@@ -117,6 +118,11 @@ const tourSchema = new mongoose.Schema(
   }
 );
 
+//tourSchema.index({ price: 1 }); // 1 index in acending order -1 in decending order
+tourSchema.index({ price: 1, ratingsAverage: -1 });
+tourSchema.index({ slug: 1 });
+tourSchema.index({ startLocation: '2dsphere' });
+
 tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
@@ -171,10 +177,19 @@ tourSchema.post(/^find/, function (docs, next) {
 });
 
 //aggegation middleware
-tourSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//tourSchema.pre('aggregate', function (next) {
+//  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
 
-  console.log(this.pipeline());
+//  console.log(this.pipeline());
+//  next();
+//});
+
+tourSchema.pre('aggregate', function (next) {
+  // dit is aangepast zodat geonear is de eerste property in de gea aggregate pipeline
+  const things = this.pipeline()[0];
+  if (Object.keys(things)[0] !== '$geoNear') {
+    this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+  }
   next();
 });
 

@@ -74,7 +74,8 @@ userSchema.pre(/^find/, function (next) {
   next();
 });
 // /^find/ = reqular expression dat zoekt naar iedere quwery die start met find
-// {$ne: fasle} omdat niet iedere gebruiker een active veld heeft! Anders is {active: true} genoeg.
+// {$ne: fasle} omdat niet iedere gebruiker een active veld heeft!
+// Anders is {active: true} genoeg.
 
 userSchema.methods.correctPassword = async function (
   candidatePassword,

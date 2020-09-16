@@ -11,16 +11,10 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-
-  //send responce
-  res.status(200).json({
-    status: 'success',
-    results: users.length,
-    data: { users },
-  });
-});
+exports.getMe = (req, res, next) =>{
+  req.params.id = req.user.id
+  next()
+}
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   //1) Create error if user POST password data
@@ -55,22 +49,11 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
 exports.createUser = (req, res) => {
   res.status(500).json({
     status: 'error',
-    message: 'route is not defined',
+    message: 'route is not defined! Please use /singup instead',
   });
 };
 
-exports.getUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'route is not defined',
-  });
-};
-
-exports.updateUser = (req, res) => {
-  res.status(500).json({
-    status: 'error',
-    message: 'route is not defined',
-  });
-};
-
+exports.getAllUsers = factory.getAll(User)
+exports.getUser = factory.getOne(User);
+exports.updateUser = factory.updateOne(User); // do not update password here
 exports.deleteUser = factory.deleteOne(User);
